@@ -17,59 +17,15 @@ export default function App() {
           <div>
             <p>ID: 1</p>
             <div>
-              <h1>First</h1>
+              <h1>Start</h1>
             </div>
           </div>
         ),
       },
-    },
-    {
-      id: "2",
-      position: { x: 300, y: 300 },
-      data: {
-        label: (
-          <div>
-            <p>ID: 2</p>
-            <textarea
-              className="w-full min-h-10 text-2xl"
-              placeholder="I am a Dynamic Input"
-            />
-          </div>
-        ),
-      },
-    },
-    {
-      id: "3",
-      position: { x: 500, y: 500 },
-      data: {
-        label: (
-          <div>
-            <h1>ID: 3</h1>
-            <div>Hi</div>
-          </div>
-        ),
-      },
-      style: { backgroundColor: "#6ede87", color: "white" },
-    },
-    {
-      id: "4",
-      position: { x: 900, y: 300 },
-      data: {
-        label: (
-          <div>
-            <p>ID: 4</p>
-            <div>
-              <Image width={500} height={500} src={firstImg} alt="img" />
-            </div>
-          </div>
-        ),
-      },
-    },
+    }
   ];
   const initialEdges = [
     { id: "e1-2", source: "1", target: "2" },
-    { id: "e1-3", source: "1", target: "3" },
-    { id: "e1-4", source: "1", target: "4", animated: true },
   ];
   const [open, setOpen] = useState(false);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -80,20 +36,20 @@ export default function App() {
   const [positionY, setPositionY] = useState<number>();
   const [selectedTag, setSelectedTag] = useState("h1");
   const [selectedImg, setSelectedImg] = useState<any>(null);
+  const [width, setWidth] = useState(200);
+  const [height, setHeight] = useState(100);
+
+  const handleResize = (event, { size }) => {
+    setWidth(size.width);
+    setHeight(size.height);
+    onResize(size);
+  };
 
   const onConnect = useCallback(
     (params: any) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
 
-  const H1Component = ({ children }: { children: any }) => <h1>{children}</h1>;
-  const PComponent = ({ children }: { children: any }) => <p>{children}</p>;
-  const DivComponent = ({ children }: { children: any }) => (
-    <div>{children}</div>
-  );
-  const ImgComponent = ({ src }: { src: any }) => (
-    <Image width={500} height={500} src={src} alt={src} />
-  );
 
   const tagComponents: {
     [key: string]: ({ children }: { children: any }) => React.JSX.Element;
@@ -105,10 +61,11 @@ export default function App() {
     img: ({ children }) => (
       <Image width={500} height={500} src={children} alt="Image" />
     ),
+    textarea: ({ children }) => <textarea className="min-h-10 resize" />,
   };
 
   const handleAddNode = () => {
-    let newId = initialNodes.length + 1;
+    let newId = nodes.length + 1;
 
     const TagComponent = tagComponents[selectedTag];
     const selectedTagContent = <TagComponent>{nodeData}</TagComponent>;
@@ -171,9 +128,9 @@ export default function App() {
         <Modal open={open} onClose={() => setOpen(false)}>
           <div className="flex flex-col">
             <h2 className="text-center font-bold">Add Nodes</h2>
-            <div>
+            <div className="flex justify-center">
               <label className="m-2" htmlFor="elements">
-                Select Tag
+                Select Tag:
               </label>
               <select
                 name="elements"
@@ -187,6 +144,7 @@ export default function App() {
                 <option value="div">div</option>
                 <option value="img">img</option>
                 <option value="button">button</option>
+                <option value="textarea">input</option>
               </select>
             </div>
             {selectedTag == "img" ? (
