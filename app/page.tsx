@@ -39,12 +39,6 @@ export default function App() {
   const [width, setWidth] = useState(200);
   const [height, setHeight] = useState(100);
 
-  const handleResize = (event, { size }) => {
-    setWidth(size.width);
-    setHeight(size.height);
-    onResize(size);
-  };
-
   const onConnect = useCallback(
     (params: any) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
